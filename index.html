@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+
+    <style>body {
+  font-size: 14px;
+  color: #584f4f;
+  background: #223972;
+  padding: 39px 20px 39px 20px;
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: white;
+  border-radius: 8px;
+  padding: 53px 44px 31px 44px;
+  max-width: 477px;
+  width: 100%;
+  gap: 25px;
+}
+
+.card-header {
+  align-self: center;
+  color: #004f9d;
+  font-size: 24px;
+}
+
+a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.card a {
+  color: #3591ed;
+}
+
+.logo {
+  height: 76px;
+  margin-bottom: 20px;
+}
+
+.account-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  top: 0;
+  width: 64px;
+  height: 64px;
+  background: #cce4f7;
+  border-radius: 100%;
+}
+
+.footer {
+  color: white;
+}
+
+@media (width < 37.5rem) {
+  .logo {
+    height: 50px;
+  }
+  .footer {
+    display: none;
+  }
+}
+
+@media (width >= 119rem) {
+  body {
+    padding-top: 150px;
+    gap: 76px;
+  }
+}
+
+#api[data-name=Unified] .heading,
+#api[data-name=Unified] .intro,
+#api[data-name=Unified] .working {
+  display: none;
+}
+
+#api[data-name=Unified] .error.pageLevel[aria-hidden=true] {
+  display: none;
+}
+
+#api[data-name=Unified] .error:not(.pageLevel) {
+  display: block !important;
+  min-height: 17px;
+}
+
+#api[data-name=Unified] .error:not(.pageLevel)[aria-hidden=true] {
+  visibility: hidden;
+}
+
+#api[data-name=Unified] .entry {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+#api[data-name=Unified] .entry-item {
+  position: relative;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 10px;
+}
+
+#api[data-name=Unified] .entry-item label {
+  position: absolute;
+  top: -8px;
+  background: white;
+  left: 14px;
+  padding: 0 4px;
+}
+
+#api[data-name=Unified] .entry-item > input {
+  padding: 11px 18px;
+  border: 1px solid #a49b9b;
+  border-radius: 8px;
+  min-height: 42px;
+}
+
+#api[data-name=Unified] .password-label {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+#api[data-name=Unified] .password-label > * {
+  pointer-events: auto;
+}
+
+#api[data-name=Unified] .password-label a {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  font-size: 12px;
+}
+
+#api[data-name=Unified] .buttons {
+  display: flex;
+  flex-direction: column;
+}
+
+#api[data-name=Unified] .buttons button {
+  background: #004f9d;
+  color: #f3f3f3;
+  padding: 13px 60px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+#api[data-name=Unified] .divider {
+  border: 1px solid #c0b7b7;
+}
+
+#api[data-name=Unified] .divider h2 {
+  display: none;
+}
+
+#api[data-name=Unified] .localAccount {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+#api[data-name=Unified] .create {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#api[data-name=Unified] .create p {
+  margin: 0;
+  display: flex;
+  gap: 6px;
+}
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="account-icon">
+        <img src="https://cwoodward-lt.github.io/b2c-template-example/user-icon.svg" />
+      </div>
+      <h1 class="card-header">Member Login</h1>
+      <div id="api"></div>
+    </div>
+    <div class="footer">
+      Footer
+    </div>
+  </body>
+</html>
