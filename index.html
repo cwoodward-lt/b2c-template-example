@@ -197,7 +197,10 @@ a {
 }
     </style>
     <script type="text/javascript">
-      console.log('test');
+      console.log('not deferred', document.getElementById('api')?.dataset);
+    </script>
+    <script type="text/javascript" defer>
+      console.log('deferred', document.getElementById('api')?.dataset);
     </script>
   </head>
   <body>
