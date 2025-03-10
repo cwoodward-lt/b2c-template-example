@@ -216,7 +216,9 @@ a {
       }
 
       async function setup() {
-        const api = await waitForElement('#api');
+        const api = await waitForElement('#api[data-name]');
+
+        if (!api) throw new Error('API not found');
 
         console.log(api);
       }
