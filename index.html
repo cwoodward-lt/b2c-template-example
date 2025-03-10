@@ -208,13 +208,20 @@ a {
             }
           });
 
-          observer.observe(document.body);
-        })
+          observer.observe(document, {
+            childList: true,
+            subtree: true,
+          });
+        });
       }
 
-      const api = await waitForElement('#api');
+      async function setup() {
+        const api = await waitForElement('#api');
 
-      console.log(api);
+        console.log(api);
+      }
+
+      setup();
     </script>
   </head>
   <body>
