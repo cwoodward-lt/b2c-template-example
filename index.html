@@ -220,7 +220,57 @@ a {
 
         if (!api) throw new Error('API not found');
 
-        console.log(api);
+        const buttons = document.querySelector('.buttons');
+
+        if (!buttons) return;
+        
+        const label = document.createElement('label');
+        
+        label.innerHTML = `
+          <input required type="checkbox" />
+          <span>
+            Label
+          </span>
+        `;
+        
+        buttons.parentElement?.insertBefore(
+          label,
+          buttons
+        );
+
+        const continueButton = document.querySelector('[type="submit"]');
+        const form = document.querySelector('form');
+
+        continueButton.disabled = !form.checkValidity();
+        form.addEventListener('input', () => {
+          continueButton.disabled = !form.checkValidity();
+        });
+
+        /* Prevent submission if the form is not valid. */
+        form.addEventListener('submit', (event) => {
+          if (form.checkValidity()) {
+            // Make local testing easier by navigating to the next page.
+            if (location.hostname === 'localhost') {
+              event.preventDefault();
+              location.href = form.action;
+            }
+          } else {
+            event.preventDefault();
+          }
+        });
+
+        for (const input of document.querySelectorAll('input')) {
+          ['keydown'].forEach((type) => {
+            input[`on${type}`] = (event) => {
+              if (event.key !== 'Enter' || form.checkValidity()) return;
+
+              event.preventDefault();
+              event.stopImmediatePropagation();
+
+              console.log('event prevented!');
+            };
+          });
+        }
       }
 
       setup();
