@@ -346,7 +346,7 @@ a {
         for (const input of document.querySelectorAll('input')) {
           // B2C registers its listeners with jQuery.
           if (window.$) {
-            $(input).off('keydown');
+            // $(input).off('keydown');
           }
 
           ['keydown'].forEach((type) => {
