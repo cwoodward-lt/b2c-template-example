@@ -316,11 +316,6 @@ a {
             input.ariaRequired === 'true';
         });
 
-        // Replace text on all buttons with custom text.
-        document.querySelectorAll('button').forEach((button) => {
-          button.innerText = buttons[button.ariaLabel] ?? button.innerText;
-        });
-
         // Try to find the submit button.
         const continueButton = document.querySelector('[type="submit"]');
 
