@@ -202,22 +202,101 @@ a {
 }
     </style>
     <script type="text/javascript">
+      /**
+       * `form.checkValidity` doesn't validate inputs that are disabled.
+       * This toggles all the inputs to be enabled, checks the validity, then restores the disabled states.
+       */
+      function checkValidity(form) {
+        if (!form) return true;
+
+        const inputs = form.querySelectorAll('input');
+
+        const disabled_states = [];
+
+        for (const input of inputs) {
+          disabled_states.push(input.disabled);
+          input.disabled = false;
+        }
+
+        const isValid = form.checkValidity();
+
+        for (let i = 0; i < inputs.length; i++) {
+          inputs[i].disabled = disabled_states[i];
+        }
+
+        return isValid;
+      }
+
       function waitForElement(selector) {
         return new Promise((resolve) => {
-          const observer = new MutationObserver((mutationList, observer) => {
+          const onChange = () => {
             const element = document.querySelector(selector);
 
             if (element) {
               observer.disconnect();
               resolve(element);
             }
-          });
+          };
+
+          const observer = new MutationObserver(onChange);
 
           observer.observe(document, {
             childList: true,
             subtree: true,
           });
+
+          onChange();
         });
+      }
+
+      function determinePage(api) {
+        if (api.dataset.name === 'Unified') return 'sign-in';
+        if (api.dataset.name === 'SelfAsserted') {
+          if (document.querySelector('.otpCode_li')) return 'sign-in-2fa';
+          if (document.querySelector('.QrCodeControl')) return 'sign-up-2fa';
+          return 'sign-up';
+        }
+
+        return null;
+      }
+
+      /**
+       * Create an element with the given tag, HTML, and attributes.
+       * @param {string} tag - The tag name of the element to create.
+       * @param {string} html - The HTML content of the element.
+       * @param {Record<string, string>} attributes - The attributes to set on the element.
+       * @returns {HTMLElement} The created element.
+       */
+      function createElement(tag, html, attributes) {
+        const element = document.createElement(tag);
+        element.innerHTML = html;
+
+        Object.entries(attributes).forEach(([key, value]) => {
+          element[key] = value;
+        });
+
+        return element;
+      }
+
+      function createHeader(title, subtitles) {
+        const subtitleElements = subtitles
+          ? subtitles
+              .map((subtitle) => {
+                return `<h2>${subtitle}</h2>`;
+              })
+              .join('')
+          : '';
+
+        return createElement(
+          'div',
+          `
+          <h1>${title}</h1>
+          ${subtitleElements}
+        `,
+          {
+            className: 'header',
+          }
+        );
       }
 
       async function setup() {
@@ -225,35 +304,38 @@ a {
 
         if (!api) throw new Error('API not found');
 
-        const buttons = document.querySelector('.buttons');
+        const page = determinePage(api);
 
-        if (!buttons) return;
-        
-        const label = document.createElement('label');
-        
-        label.innerHTML = `
-          <input required type="checkbox" />
-          <span>
-            Label
-          </span>
-        `;
-        
-        buttons.parentElement?.insertBefore(
-          label,
-          buttons
-        );
+        if (!page) throw new Error('Page not found');
 
+        // Set required fields as actually required and set placeholders on all inputs.
+        document.querySelectorAll('input').forEach((input) => {
+          input.required =
+            input.id === 'email' ||
+            input.required ||
+            input.ariaRequired === 'true';
+        });
+
+        // Replace text on all buttons with custom text.
+        document.querySelectorAll('button').forEach((button) => {
+          button.innerText = buttons[button.ariaLabel] ?? button.innerText;
+        });
+
+        // Try to find the submit button.
         const continueButton = document.querySelector('[type="submit"]');
+
         const form = document.querySelector('form');
 
-        continueButton.disabled = !form.checkValidity();
+        continueButton.disabled = !checkValidity(form);
+
+        /* When an input is changed check if the continue button should be disabled. */
         form.addEventListener('input', () => {
-          continueButton.disabled = !form.checkValidity();
+          continueButton.disabled = !checkValidity(form);
         });
 
         /* Prevent submission if the form is not valid. */
         form.addEventListener('submit', (event) => {
-          if (form.checkValidity()) {
+          if (checkValidity(form)) {
             // Make local testing easier by navigating to the next page.
             if (location.hostname === 'localhost') {
               event.preventDefault();
@@ -264,15 +346,20 @@ a {
           }
         });
 
+        // B2C Listens for the enter key to be pressed on the password field specifically to submit the form.
+        // Hoping I can prevent it by listening to the `onkeydown` event directly.
         for (const input of document.querySelectorAll('input')) {
+          // B2C registers its listeners with jQuery.
+          if (window.$) {
+            $(input).off('keydown');
+          }
+
           ['keydown'].forEach((type) => {
             input[`on${type}`] = (event) => {
-              if (event.key !== 'Enter' || form.checkValidity()) return;
+              if (event.key !== 'Enter' || checkValidity(form)) return;
 
               event.preventDefault();
               event.stopImmediatePropagation();
-
-              console.log('event prevented!');
             };
           });
         }
